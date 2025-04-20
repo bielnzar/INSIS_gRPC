@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Kontrol Kota Cerdas</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding-top: 70px;
+      }
+      .output-area {
+        max-height: 400px;
+        overflow-y: auto;
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .modal-body {
+        max-height: 500px;
+        overflow-y: auto;
+      }
+      .description {
+        font-style: italic;
+        color: #6c757d;
+        margin-bottom: 10px;
+      }
+      .command-entry .col {
+        padding: 5px;
+      }
+      .command-entry input {
+        width: 100%;
+      }
+      .modal-dialog {
+        max-width: 700px;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">Kontrol Kota Cerdas</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#unary">Unary RPC</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#server-stream">Server Streaming</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#client-stream">Client Streaming</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#bidi-stream"
+                >Bidirectional Streaming</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <!-- Unary RPC -->
+      <section id="unary" class="mb-5">
+        <h2>Dapatkan Status Lalu Lintas (Unary RPC)</h2>
+        <p class="description">
+          Masukkan ID jalan untuk mendapatkan status kemacetan dan jumlah
+          kendaraan.
+        </p>
+        <div class="card">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="road-id" class="form-label"
+                >ID Jalan (contoh: Jalan Sudirman)</label
+              >
+              <input type="text" class="form-control" id="road-id" required />
+            </div>
+            <button type="button" class="btn btn-primary" id="unary-submit">
+              Dapatkan Status
+            </button>
+            <div id="unary-output" class="output-area mt-3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Server Streaming RPC -->
+      <section id="server-stream" class="mb-5">
+        <h2>Streaming Kualitas Udara (Server Streaming RPC)</h2>
+        <p class="description">
+          Masukkan ID zona untuk memulai streaming data kualitas udara secara
+          real-time.
+        </p>
+        <div class="card">
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="zone-id" class="form-label"
+                >ID Zona (contoh: Jakarta Pusat)</label
+              >
+              <input type="text" class="form-control" id="zone-id" required />
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="start-server-stream"
+            >
+              Mulai Streaming
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="stop-server-stream"
+              disabled
+            >
+              Hentikan Streaming
+            </button>
+            <div id="server-stream-output" class="output-area mt-3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Client Streaming RPC -->
+      <section id="client-stream" class="mb-5">
+        <h2>Atur Lampu Lalu Lintas (Client Streaming RPC)</h2>
+        <p class="description">
+          Tambahkan perintah untuk mengatur lampu lalu lintas di berbagai
+          persimpangan. Perintah akan dikirim per detik hingga durasi habis
+          untuk setiap persimpangan.
+        </p>
+        <div class="card">
+          <div class="card-body">
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#client-stream-modal"
+            >
+              Tambah Perintah
+            </button>
+            <div id="client-stream-output" class="output-area mt-3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bidirectional Streaming RPC -->
+      <section id="bidi-stream" class="mb-5">
+        <h2>Kontrol Darurat (Bidirectional Streaming RPC)</h2>
+        <p class="description">
+          Kirim perintah darurat dan terima feedback real-time. Contoh perintah:
+          "Kirim Bantuan ke Lokasi Bencana", "Evakuasi Area Banjir",
+          "check_status", "priority_mode".
+        </p>
+        <div class="card">
+          <div class="card-body">
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#bidi-stream-modal"
+            >
+              Mulai Kontrol Darurat
+            </button>
+            <div id="bidi-stream-output" class="output-area mt-3"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal for Client Streaming -->
+    <div class="modal fade" id="client-stream-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Atur Lampu Lalu Lintas</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="client-stream-commands">
+              <div class="command-entry mb-3">
+                <div class="row g-3">
+                  <div class="col-md-5">
+                    <input
+                      type="text"
+                      class="form-control intersection-id"
+                      placeholder="ID Persimpangan (contoh: Simpang Senayan)"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-5">
+                    <input
+                      type="number"
+                      class="form-control action"
+                      placeholder="Durasi (contoh: 10 second)"
+                      min="1"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-danger remove-command">
+                      Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="add-client-command"
+            >
+              Tambah Perintah
+            </button>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="send-client-commands"
+            >
+              Kirim Perintah
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for Bidirectional Streaming -->
+    <div class="modal fade" id="bidi-stream-modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Kontrol Darurat</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="unit-id" class="form-label"
+                >ID Unit (contoh: Ambulans 01)</label
+              >
+              <input type="text" class="form-control" id="unit-id" required />
+            </div>
+            <div class="mb-3">
+              <label for="command" class="form-label"
+                >Perintah (contoh: Kirim Bantuan ke Lokasi Bencana, Evakuasi
+                Area Banjir, check_status, priority_mode)</label
+              >
+              <input type="text" class="form-control" id="command" required />
+            </div>
+            <button type="button" class="btn btn-primary" id="bidi-submit">
+              Kirim Perintah
+            </button>
+            <table class="table table-striped mt-3">
+              <thead>
+                <tr>
+                  <th>ID Unit</th>
+                  <th>Status</th>
+                  <th>Lokasi</th>
+                </tr>
+              </thead>
+              <tbody id="bidi-stream-table"></tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="stop-bidi-stream">
+              Hentikan Streaming
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let wsServerStream = null;
+      let wsBidiStream = null;
+      let wsClientStream = null;
+
+      // Unary RPC
+      document
+        .getElementById("unary-submit")
+        .addEventListener("click", async () => {
+          const roadId = document.getElementById("road-id").value.trim();
+          const output = document.getElementById("unary-output");
+          output.innerHTML = "";
+          if (!roadId) {
+            output.innerHTML =
+              '<div class="alert alert-warning">Mohon masukkan ID Jalan</div>';
+            return;
+          }
+          try {
+            const response = await fetch("http://localhost:8081/unary", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ road_id: roadId }),
+            });
+            if (!response.ok)
+              throw new Error(`Kesalahan server: ${response.status}`);
+            const data = await response.json();
+            output.innerHTML = `<div class="alert alert-success">Status Lalu Lintas: ${data.road_id} - ${data.congestion_level}, Kendaraan: ${data.vehicle_count}</div>`;
+          } catch (err) {
+            console.error("Kesalahan Unary RPC:", err);
+            output.innerHTML = `<div class="alert alert-danger">Kesalahan: ${err.message}</div>`;
+          }
+        });
+
+      // Server Streaming RPC
+      document
+        .getElementById("start-server-stream")
+        .addEventListener("click", () => {
+          const zoneId = document.getElementById("zone-id").value.trim();
+          const output = document.getElementById("server-stream-output");
+          const startBtn = document.getElementById("start-server-stream");
+          const stopBtn = document.getElementById("stop-server-stream");
+          output.innerHTML = "";
+          if (!zoneId) {
+            output.innerHTML =
+              '<div class="alert alert-warning">Mohon masukkan ID Zona</div>';
+            return;
+          }
+          if (wsServerStream && wsServerStream.readyState === WebSocket.OPEN) {
+            wsServerStream.close();
+          }
+          wsServerStream = new WebSocket(
+            `ws://localhost:8081/server-stream?zone_id=${encodeURIComponent(
+              zoneId
+            )}`
+          );
+          wsServerStream.onopen = () => {
+            console.log("WebSocket Server Streaming terbuka");
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+          };
+          wsServerStream.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            output.innerHTML += `<div>Kualitas Udara di ${data.zone_id}: ${data.pollution_level} pada ${data.timestamp}</div>`;
+            output.scrollTop = output.scrollHeight;
+          };
+          wsServerStream.onerror = (error) => {
+            console.error("Kesalahan Server Streaming:", error);
+            output.innerHTML += `<div class="alert alert-danger">Terjadi kesalahan streaming</div>`;
+          };
+          wsServerStream.onclose = () => {
+            console.log("WebSocket Server Streaming ditutup");
+            output.innerHTML += `<div class="alert alert-info">Streaming dihentikan</div>`;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+          };
+        });
+
+      document
+        .getElementById("stop-server-stream")
+        .addEventListener("click", () => {
+          if (wsServerStream && wsServerStream.readyState === WebSocket.OPEN) {
+            wsServerStream.close();
+          }
+        });
+
+      // Client Streaming RPC
+      document
+        .getElementById("add-client-command")
+        .addEventListener("click", () => {
+          const container = document.getElementById("client-stream-commands");
+          const entry = document.createElement("div");
+          entry.className = "command-entry mb-3";
+          entry.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control intersection-id" placeholder="ID Persimpangan (contoh: Simpang Senayan)" required>
+                    </div>
+                    <div class="col-md-5">
+                        <input type="number" class="form-control action" placeholder="Durasi (contoh: 10 second)" min="1" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-danger remove-command">Hapus</button>
+                    </div>
+                </div>`;
+          container.appendChild(entry);
+          entry
+            .querySelector(".remove-command")
+            .addEventListener("click", () => entry.remove());
+        });
+
+      document
+        .getElementById("send-client-commands")
+        .addEventListener("click", () => {
+          const commands = [];
+          const output = document.getElementById("client-stream-output");
+          output.innerHTML = "";
+          document.querySelectorAll(".command-entry").forEach((entry) => {
+            const intersectionId = entry
+              .querySelector(".intersection-id")
+              .value.trim();
+            const duration = parseInt(
+              entry.querySelector(".action").value.trim()
+            );
+            if (intersectionId && !isNaN(duration) && duration > 0) {
+              commands.push({ intersection_id: intersectionId, duration });
+            }
+          });
+          if (commands.length === 0) {
+            output.innerHTML =
+              '<div class="alert alert-warning">Mohon tambahkan setidaknya satu perintah yang valid</div>';
+            return;
+          }
+
+          // Buka koneksi WebSocket
+          wsClientStream = new WebSocket("ws://localhost:8081/client-stream");
+          wsClientStream.onopen = () => {
+            console.log("WebSocket Client Streaming terbuka");
+            let cmdIndex = 0;
+
+            const sendCommands = () => {
+              if (cmdIndex >= commands.length) {
+                // Semua perintah selesai, kirim sinyal selesai
+                wsClientStream.send(JSON.stringify({ done: true }));
+                return;
+              }
+
+              const cmd = commands[cmdIndex];
+              let remaining = cmd.duration;
+
+              const sendNextSecond = () => {
+                if (remaining > 0) {
+                  const action = `${remaining} second`;
+                  wsClientStream.send(
+                    JSON.stringify({
+                      intersection_id: cmd.intersection_id,
+                      action: action,
+                    })
+                  );
+                  output.innerHTML += `<div>Mengirim perintah: ${cmd.intersection_id} - ${action}</div>`;
+                  output.scrollTop = output.scrollHeight;
+                  remaining--;
+                  setTimeout(sendNextSecond, 1000); // Kirim perintah berikutnya setelah 1 detik
+                } else {
+                  // Lanjut ke perintah berikutnya
+                  cmdIndex++;
+                  sendCommands();
+                }
+              };
+
+              sendNextSecond();
+            };
+
+            sendCommands();
+          };
+          wsClientStream.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            output.innerHTML += `<div class="alert alert-success">${data.message}</div>`;
+            output.scrollTop = output.scrollHeight;
+            bootstrap.Modal.getInstance(
+              document.getElementById("client-stream-modal")
+            ).hide();
+            wsClientStream.close();
+          };
+          wsClientStream.onerror = (error) => {
+            console.error("Kesalahan Client Streaming:", error);
+            output.innerHTML += `<div class="alert alert-danger">Terjadi kesalahan streaming</div>`;
+            wsClientStream.close();
+          };
+          wsClientStream.onclose = () => {
+            console.log("WebSocket Client Streaming ditutup");
+          };
+        });
+
+      // Bidirectional Streaming RPC
+      document.getElementById("bidi-submit").addEventListener("click", () => {
+        const unitId = document.getElementById("unit-id").value.trim();
+        const command = document.getElementById("command").value.trim();
+        const tableBody = document.getElementById("bidi-stream-table");
+        const output = document.getElementById("bidi-stream-output");
+        if (!unitId || !command) {
+          output.innerHTML =
+            '<div class="alert alert-warning">Mohon masukkan ID Unit dan Perintah</div>';
+          return;
+        }
+        if (!wsBidiStream || wsBidiStream.readyState !== WebSocket.OPEN) {
+          wsBidiStream = new WebSocket("ws://localhost:8081/bidi-stream");
+          wsBidiStream.onopen = () => {
+            console.log("WebSocket Bidirectional Streaming terbuka");
+            wsBidiStream.send(JSON.stringify({ unit_id: unitId, command }));
+          };
+          wsBidiStream.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            tableBody.innerHTML += `<tr><td>${data.unit_id}</td><td>${data.status}</td><td>${data.location}</td></tr>`;
+            output.innerHTML += `<div>Feedback: ${data.unit_id} - ${data.status} di ${data.location}</div>`;
+            output.scrollTop = output.scrollHeight;
+          };
+          wsBidiStream.onerror = (error) => {
+            console.error("Kesalahan Bidirectional Streaming:", error);
+            output.innerHTML += `<div class="alert alert-danger">Terjadi kesalahan streaming</div>`;
+          };
+          wsBidiStream.onclose = () => {
+            console.log("WebSocket Bidirectional Streaming ditutup");
+            output.innerHTML += `<div class="alert alert-info">Streaming dihentikan</div>`;
+          };
+        } else {
+          wsBidiStream.send(JSON.stringify({ unit_id: unitId, command }));
+        }
+        document.getElementById("unit-id").value = "";
+        document.getElementById("command").value = "";
+      });
+
+      document
+        .getElementById("stop-bidi-stream")
+        .addEventListener("click", () => {
+          if (wsBidiStream && wsBidiStream.readyState === WebSocket.OPEN) {
+            wsBidiStream.close();
+          }
+        });
+    </script>
+  </body>
+</html>
