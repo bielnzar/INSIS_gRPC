@@ -53,7 +53,7 @@ GO-Urban/
 
 Untuk menjalankan GO-Urban, Anda memerlukan:
 
-- **Go** (versi 1.16 atau lebih baru): [unduh di sini]https://go.dev/doc/install
+- **Go** (versi 1.16 atau lebih baru): [Unduh Disini](https://go.dev/doc/install)
 - **protoc**: Kompilator Protocol Buffers untuk menghasilkan file gRPC. Petunjuk instalasi.
 - Browser modern (Chrome, Firefox, dll.) untuk mengakses antarmuka web.
 
