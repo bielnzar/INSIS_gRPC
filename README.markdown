@@ -1,8 +1,8 @@
-# INSIS_REST-API
+# INSIS_GRPC
 
 Mata Kuliah Integrasi Sistem 2025
 
-Proyek 1 REST API - GO-Urban
+Proyek 1 GRPC - GO-Urban
 
 ## Kelompok I
 
