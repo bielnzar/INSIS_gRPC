@@ -1,3 +1,19 @@
+# INSIS_REST-API
+
+Mata Kuliah Integrasi Sistem 2025
+
+Proyek 1 REST API - GO-Urban
+
+## Kelompok I
+
+|      **Nama**       |  **NRP**   |
+| :-----------------: | :--------: |
+|    Abhirama T.H     | 5027231061 |
+|        Hasan        | 5027231073 |
+| Nabiel Nizar Anwari | 5027231087 |
+
+
+
 # GO-Urban: Simulasi Kota Cerdas dengan gRPC dan Go
 
 Selamat datang di **GO-Urban**, sebuah proyek simulasi pengelolaan kota cerdas yang dibangun dengan teknologi **Go** dan **gRPC**! Proyek ini memungkinkan Anda mengontrol lalu lintas, memantau kualitas udara, dan mengelola unit darurat seperti ambulans melalui antarmuka web yang interaktif. Dengan konteks lokal Indonesia, GO-Urban menawarkan pengalaman realistis dan menarik untuk memahami teknologi *smart city* dan komunikasi gRPC.
