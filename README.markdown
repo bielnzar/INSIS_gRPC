@@ -23,7 +23,7 @@ GO-Urban dirancang untuk:
 - Menyediakan simulasi *smart city* yang interaktif dan realistis.
 - Mendemonstrasikan pola komunikasi gRPC: Unary, Server Streaming, Client Streaming, dan Bidirectional Streaming.
 - Memberikan pengalaman belajar tentang Go, gRPC, dan WebSocket dalam aplikasi nyata.
-- Menawarkan antarmuka yang mudah digunakan dengan konteks Indonesia, seperti nama jalan dan persimpangan lokal.
+- Menawarkan antarmuka yang mudah digunakan untuk masyarakat Indonesia,
 
 ## Struktur Direktori
 
@@ -53,7 +53,7 @@ GO-Urban/
 
 Untuk menjalankan GO-Urban, Anda memerlukan:
 
-- **Go** (versi 1.16 atau lebih baru): Unduh di sini.
+- **Go** (versi 1.16 atau lebih baru): [unduh di sini]https://go.dev/doc/install
 - **protoc**: Kompilator Protocol Buffers untuk menghasilkan file gRPC. Petunjuk instalasi.
 - Browser modern (Chrome, Firefox, dll.) untuk mengakses antarmuka web.
 
@@ -212,43 +212,13 @@ Berikut adalah panduan untuk menggunakan fitur-fitur GO-Urban melalui antarmuka 
 
 ### Konteks Lokal
 
-- Nama jalan dan persimpangan menggunakan konteks Indonesia (misalnya, "Jalan Sudirman", "Simpang Senayan").
+- Nama jalan dan persimpangan menggunakan Bahasa Indonesia (misalnya, "Jalan Sudirman", "Simpang Senayan").
 - Semua feedback dalam bahasa Indonesia untuk kemudahan pengguna lokal.
 
-## Kontribusi
-
-Ingin berkontribusi ke GO-Urban? Berikut langkahnya:
-
-1. Fork repositori ini.
-2. Buat branch baru: `git checkout -b fitur-baru`.
-3. Lakukan perubahan dan commit: `git commit -m "Menambahkan fitur baru"`.
-4. Push ke branch: `git push origin fitur-baru`.
-5. Buat Pull Request di GitHub.
-
-Kami menyambut ide seperti menambahkan fitur baru, memperbaiki UI, atau meningkatkan performa!
-
-## Pemecahan Masalah
-
-Jika menemui masalah:
-
-- **Server tidak berjalan**:
-  - Pastikan port `50051` (gRPC) dan `8081` (web) bebas: `netstat -aon | findstr :8081`.
-  - Bunuh proses yang menggunakan port: `taskkill /PID <PID> /F`.
-- **WebSocket gagal terkoneksi**:
-  - Periksa console browser (F12) untuk error.
-  - Pastikan `webserver.go` berjalan di port `8081`.
-- **Fitur tidak berfungsi**:
-  - Periksa log di terminal `server.go` dan `webserver.go`.
-  - Pastikan semua file menggunakan versi terbaru dari repositori.
-- Laporkan masalah di Issues dengan tangkapan layar atau log error.
 
 ## Lisensi
 
-Proyek ini dilisensikan di bawah MIT License. Silakan gunakan, modifikasi, dan distribusikan sesuai kebutuhan.
-
-## Kontak
-
-Punya pertanyaan atau saran? Hubungi kami melalui Issues atau email di .
+Proyek ini dilisensikan di bawah Kelompok I (Nabiel,Hasan,Abhi) Mata Kuliah Integrasi Sistem Departemen Teknologi Informasi License. Silakan gunakan, modifikasi, dan distribusikan sesuai kebutuhan.
 
 ---
 
