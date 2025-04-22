@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 syntax = "proto3";
 
 package smartcity;
@@ -49,4 +50,57 @@ message EmergencyFeedback {
   string unit_id = 1;
   string status = 2;
   string location = 3;
+=======
+syntax = "proto3";
+
+package smartcity;
+
+option go_package = "smartcity/smartcity";
+
+service SmartCityService {
+  rpc GetTrafficStatus (TrafficRequest) returns (TrafficStatus);
+  rpc StreamAirQuality (AirQualityRequest) returns (stream AirQualityData);
+  rpc SetTrafficLights (stream TrafficLightCommand) returns (CommandResponse);
+  rpc EmergencyControl (stream EmergencyCommand) returns (stream EmergencyFeedback);
+}
+
+message TrafficRequest {
+  string road_id = 1;
+}
+
+message TrafficStatus {
+  string road_id = 1;
+  string congestion_level = 2;
+  int32 vehicle_count = 3;
+}
+
+message AirQualityRequest {
+  string zone_id = 1;
+}
+
+message AirQualityData {
+  string zone_id = 1;
+  float pollution_level = 2;
+  string timestamp = 3;
+}
+
+message TrafficLightCommand {
+  string intersection_id = 1;
+  string action = 2;
+}
+
+message CommandResponse {
+  string message = 1;
+}
+
+message EmergencyCommand {
+  string unit_id = 1;
+  string command = 2;
+}
+
+message EmergencyFeedback {
+  string unit_id = 1;
+  string status = 2;
+  string location = 3;
+>>>>>>> e6016d1 (Menambahkan fitur streaming dan memperbaiki tampilan UI)
 }
